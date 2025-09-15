@@ -11,6 +11,10 @@ When assigned to an issue, Copilot must:
 - **Analyze** the issue title and description.
 - **Identify** which parts of the codebase would likely need changes.
 - **Estimate** the development effort required.
+- **Identify the most capable developer for the issue** , taking into account:
+  - Skills & experience in the relevant code area.
+  - Current or recent work in related modules or features.
+  - Contextual knowledge, e.g., developers who will be affected by the changes or already understand the logic.
 - **Create a pull request with a single structured comment** containing the analysis and estimate.
 
 ---
