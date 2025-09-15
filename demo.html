@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number to String Converter Demo - SCRUM-6</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .demo-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        button:hover {
+            background-color: #005a87;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 4px;
+        }
+        .error {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #ffe8e8;
+            border: 1px solid #f44336;
+            border-radius: 4px;
+            color: #d32f2f;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Number to String Converter Demo</h1>
+        <p><strong>SCRUM-6:</strong> JavaScript function that converts numbers list into string list</p>
+        
+        <div class="demo-section">
+            <h3>Interactive Demo</h3>
+            <p>Enter numbers separated by commas (e.g., 1,2,3.14,-5,0):</p>
+            <input type="text" id="numberInput" placeholder="1,2,3.14,-5,0" value="1,2,3.14,-5,0">
+            <button onclick="convertNumbers()">Convert to Strings</button>
+            <div id="result"></div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Pre-defined Examples</h3>
+            <button onclick="runExample([1, 2, 3])">Basic: [1, 2, 3]</button>
+            <button onclick="runExample([])">Empty Array: []</button>
+            <button onclick="runExample([-5, 0, 3.14, 42])">Mixed: [-5, 0, 3.14, 42]</button>
+            <button onclick="runExample([100, 200, 300])">Large: [100, 200, 300]</button>
+            <div id="exampleResult"></div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Error Handling Examples</h3>
+            <button onclick="testError('not an array')">Test: Non-array input</button>
+            <button onclick="testError([1, 'string', 3])">Test: Mixed types</button>
+            <button onclick="testError([1, null, 3])">Test: Null value</button>
+            <div id="errorResult"></div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Function Code</h3>
+            <pre id="functionCode"></pre>
+        </div>
+    </div>
+
+    <script src="numberToStringConverter.js"></script>
+    <script>
+        function convertNumbers() {
+            const input = document.getElementById('numberInput').value;
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                // Parse the input string into an array of numbers
+                const numbers = input.split(',').map(s => {
+                    const num = parseFloat(s.trim());
+                    if (isNaN(num)) {
+                        throw new Error(`"${s.trim()}" is not a valid number`);
+                    }
+                    return num;
+                });
+                
+                const result = convertNumbersToStrings(numbers);
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <strong>Input:</strong> [${numbers.join(', ')}]<br>
+                        <strong>Output:</strong> [${result.map(s => `"${s}"`).join(', ')}]<br>
+                        <strong>Types:</strong> ${result.map(s => typeof s).join(', ')}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${error.message}</div>`;
+            }
+        }
+
+        function runExample(numbers) {
+            const resultDiv = document.getElementById('exampleResult');
+            try {
+                const result = convertNumbersToStrings(numbers);
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <strong>Input:</strong> [${numbers.join(', ')}]<br>
+                        <strong>Output:</strong> [${result.map(s => `"${s}"`).join(', ')}]<br>
+                        <strong>Input Types:</strong> ${numbers.map(n => typeof n).join(', ')}<br>
+                        <strong>Output Types:</strong> ${result.map(s => typeof s).join(', ')}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${error.message}</div>`;
+            }
+        }
+
+        function testError(input) {
+            const resultDiv = document.getElementById('errorResult');
+            try {
+                const result = convertNumbersToStrings(input);
+                resultDiv.innerHTML = `<div class="result">Unexpected success: ${JSON.stringify(result)}</div>`;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <strong>Input:</strong> ${JSON.stringify(input)}<br>
+                        <strong>Expected Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display the function code
+        document.getElementById('functionCode').textContent = convertNumbersToStrings.toString();
+    </script>
+</body>
+</html>
