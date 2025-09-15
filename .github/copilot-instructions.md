@@ -15,6 +15,7 @@ When assigned to an issue, Copilot must:
   - Skills & experience in the relevant code area.
   - Current or recent work in related modules or features.
   - Contextual knowledge, e.g., developers who will be affected by the changes or already understand the logic.
+  - You must add the github user, or the user name identified by commits authors
 - **Create a pull request with a single structured comment** containing the analysis and estimate.
 
 ---
