@@ -39,6 +39,7 @@ When creating the PR, include only this structured comment:
 
 **Code Impact Level:** <Low | Medium | High>  
 **Estimated Effort:** <X hours>
+**Most Capable Developer:** <NAME | GitHub handle>
 
 **Reasoning:**  
 <Brief explanation of what would need to be changed and why this estimate was chosen.>
