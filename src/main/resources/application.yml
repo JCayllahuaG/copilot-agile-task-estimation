@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: testing-copilot-agent
+  r2dbc:
+    name: copilot_db
+    username: copilot_user
+    password: copilot_pass
+    url: r2dbc:postgresql://localhost:5432
