@@ -1,0 +1,23 @@
+name: Run When Labeled Issue Is Created
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  handle-labeled-issue:
+    if: >
+      github.event.action == 'opened' && 
+      contains(github.event.issue.labels.*.name, 'from-jira')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Issue Info
+        run: |
+          echo "🎯 Issue Title: ${{ github.event.issue.title }}"
+          echo "📝 Issue Body: ${{ github.event.issue.body }}"
+          echo "🏷️ Labels: ${{ toJson(github.event.issue.labels) }}"
+      
+      # Example step: You can call Copilot CLI or your custom script here
+      - name: Generate Pull Request (Example)
+        run: |
+          echo "🔧 Here you would run your Copilot CLI / script"
