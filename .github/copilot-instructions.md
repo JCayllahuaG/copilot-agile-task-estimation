@@ -46,3 +46,6 @@ When creating the PR, include only this structured comment:
 
 **Reasoning:**  
 <Brief explanation of what would need to be changed, which projects/services are involved, and why this estimate was chosen.>
+```
+
+Remember that you must not generate code, only consider the planning and required estimation.
