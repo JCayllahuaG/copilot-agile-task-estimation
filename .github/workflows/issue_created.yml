@@ -17,15 +17,15 @@ jobs:
           echo "📝 Issue Body: ${{ github.event.issue.body }}"
           echo "🏷️ Labels: ${{ toJson(github.event.issue.labels) }}"
     
-      - name: Query GitHub GraphQL for Issue ID
+      - name: Query GitHub GraphQL for Issue ID and Assign Copilot
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GRAPHQL_SECRET: ${{ secrets.GRAPHQL_SECRET }}
         run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
           OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
           REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
 
-          # Build GraphQL query
+          # Query to get the issue ID
           QUERY=$(cat <<EOF
           query {
             repository(owner: "$OWNER", name: "$REPO") {
@@ -38,21 +38,17 @@ jobs:
           EOF
           )
 
-          # Escape query for JSON
           ESCAPED_QUERY=$(echo "$QUERY" | jq -Rs .)
 
-          # Call GitHub GraphQL API
           RESPONSE=$(curl -s -X POST https://api.github.com/graphql \
-            -H "Authorization: bearer $GITHUB_TOKEN" \
+            -H "Authorization: bearer $GRAPHQL_SECRET" \
             -H "Content-Type: application/json" \
             -d "{\"query\": $ESCAPED_QUERY}")
-
-          echo "GraphQL Response: $RESPONSE"
 
           ISSUE_ID=$(echo "$RESPONSE" | jq -r '.data.repository.issue.id')
           echo "Issue ID: $ISSUE_ID"
 
-          # GraphQL mutation to assign issue to Copilot
+          # Mutation to assign Copilot bot
           MUTATION=$(cat <<EOF
           mutation {
             replaceActorsForAssignable(
@@ -76,9 +72,8 @@ jobs:
 
           ESCAPED_MUTATION=$(echo "$MUTATION" | jq -Rs .)
 
-          # Call GitHub GraphQL API to assign
           ASSIGN_RESPONSE=$(curl -s -X POST https://api.github.com/graphql \
-            -H "Authorization: bearer $GITHUB_TOKEN" \
+            -H "Authorization: bearer $GRAPHQL_SECRET" \
             -H "Content-Type: application/json" \
             -d "{\"query\": $ESCAPED_MUTATION}")
 
