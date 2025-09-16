@@ -18,6 +18,27 @@ jobs:
           echo "🏷️ Labels: ${{ toJson(github.event.issue.labels) }}"
       
       # Example step: You can call Copilot CLI or your custom script here
-      - name: Generate Pull Request (Example)
+      - name: Query GitHub GraphQL for Issue ID
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "🔧 Here you would run your Copilot CLI / script"
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+          REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          
+          QUERY=$(cat <<EOF
+          query {              repository(owner: "$OWNER", name: "$REPO") {
+              issue(number: $ISSUE_NUMBER) {
+                id
+                title
+              }
+            }
+          }
+          EOF
+          )
+          RESPONSE=$(curl -s -X POST https://api.github.com/graphql \
+            -H "Authorization: bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\": \"$QUERY\"}")
+            
+          echo "GraphQL Response: $RESPONSE"
