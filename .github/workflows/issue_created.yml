@@ -48,3 +48,38 @@ jobs:
             -d "{\"query\": $ESCAPED_QUERY}")
 
           echo "GraphQL Response: $RESPONSE"
+
+          ISSUE_ID=$(echo "$RESPONSE" | jq -r '.data.repository.issue.id')
+          echo "Issue ID: $ISSUE_ID"
+
+          # GraphQL mutation to assign issue to Copilot
+          MUTATION=$(cat <<EOF
+          mutation {
+            replaceActorsForAssignable(
+              input: {assignableId: "$ISSUE_ID", actorIds: ["BOT_kgDOC9w8XQ"]}
+            ) {
+              assignable {
+                ... on Issue {
+                  id
+                  title
+                  assignees(first: 10) {
+                    nodes {
+                      login
+                    }
+                  }
+                }
+              }
+            }
+          }
+          EOF
+          )
+
+          ESCAPED_MUTATION=$(echo "$MUTATION" | jq -Rs .)
+
+          # Call GitHub GraphQL API to assign
+          ASSIGN_RESPONSE=$(curl -s -X POST https://api.github.com/graphql \
+            -H "Authorization: bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\": $ESCAPED_MUTATION}")
+
+          echo "Assign Response: $ASSIGN_RESPONSE"
