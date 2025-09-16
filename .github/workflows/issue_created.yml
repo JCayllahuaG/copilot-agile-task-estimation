@@ -22,12 +22,36 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          name: Run When Issue Is Opened
+
+on:
+  issues:
+    types: [opened]  # Trigger only when issue is created
+
+jobs:
+  get-issue-id:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Issue Info
+        run: |
+          echo "🎯 Issue Title: ${{ github.event.issue.title }}"
+          echo "📝 Issue Body: ${{ github.event.issue.body }}"
+          echo "🏷️ Labels: ${{ toJson(github.event.issue.labels) }}"
+          echo "Issue Number: ${{ github.event.issue.number }}"
+          echo "Repository: ${{ github.repository }}"
+
+      - name: Query GitHub GraphQL for Issue ID
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
           OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
           REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-          
+
+          # Build GraphQL query
           QUERY=$(cat <<EOF
-          query {              repository(owner: "$OWNER", name: "$REPO") {
+          query {
+            repository(owner: "$OWNER", name: "$REPO") {
               issue(number: $ISSUE_NUMBER) {
                 id
                 title
@@ -36,9 +60,14 @@ jobs:
           }
           EOF
           )
+
+          # Escape query for JSON
+          ESCAPED_QUERY=$(echo "$QUERY" | jq -Rs .)
+
+          # Call GitHub GraphQL API
           RESPONSE=$(curl -s -X POST https://api.github.com/graphql \
             -H "Authorization: bearer $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"query\": \"$QUERY\"}")
-            
+            -d "{\"query\": $ESCAPED_QUERY}")
+
           echo "GraphQL Response: $RESPONSE"
