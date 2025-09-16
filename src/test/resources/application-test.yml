@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: testing-copilot-agent-test
+  r2dbc:
+    name: test_db
+    username: test_user
+    password: test_pass
+    url: r2dbc:h2:mem:///testdb
+  logging:
+    level:
+      com.example.testingcopilotagent: DEBUG
+      org.springframework.r2dbc: DEBUG
+
+# Test configuration to mock repository dependencies
