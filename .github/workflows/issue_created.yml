@@ -16,30 +16,7 @@ jobs:
           echo "🎯 Issue Title: ${{ github.event.issue.title }}"
           echo "📝 Issue Body: ${{ github.event.issue.body }}"
           echo "🏷️ Labels: ${{ toJson(github.event.issue.labels) }}"
-      
-      # Example step: You can call Copilot CLI or your custom script here
-      - name: Query GitHub GraphQL for Issue ID
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          name: Run When Issue Is Opened
-
-on:
-  issues:
-    types: [opened]  # Trigger only when issue is created
-
-jobs:
-  get-issue-id:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print Issue Info
-        run: |
-          echo "🎯 Issue Title: ${{ github.event.issue.title }}"
-          echo "📝 Issue Body: ${{ github.event.issue.body }}"
-          echo "🏷️ Labels: ${{ toJson(github.event.issue.labels) }}"
-          echo "Issue Number: ${{ github.event.issue.number }}"
-          echo "Repository: ${{ github.repository }}"
-
+    
       - name: Query GitHub GraphQL for Issue ID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
